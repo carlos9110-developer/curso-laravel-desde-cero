@@ -10,44 +10,54 @@ class ProductController extends Controller
 {
     public function index()
     {
-        //$products = DB::table('products')->get();
         $products = Product::all();
-        dd($products);
-        return 'This is the list of products from CONTROLLER';
+        return view('products.index')->with([
+            'products' => $products
+        ]);
     }
 
     public function create()
     {
-        return 'This is the form to create a product from CONTROLLER';
+        return view('products.create');
     }
 
     public function store()
     {
-        //
+        $product = Product::create(request()->all());
+
+        //return redirect()->back(); // retorna a la ubicación anterior
+        //return redirect()->action('MainController@index');
+        return redirect()->route('products.index');
     }
 
     public function show($productId)
     {
-        //$product = DB::table('products')->find($productId);
-        //$product = Product::find($productId);
         $product = Product::findOrFail($productId);
-        return $product;
-        dd($product);
-        return "Showing product with id {$product} from CONTROLLER";
+
+        return view('products.show')->with([
+            'product' => $product,
+            'html' => '<h2>Hola soy un titulo</h2>'
+        ]);
     }
 
     public function edit($product)
     {
-        return "Showing the form to edit the product with id {$product}";
+        return view('products.edit')->with([
+            'product' => Product::findOrFail($product)
+        ]);
     }
 
     public function update($product)
     {
-        //
+        $product = Product::findOrFail($product);
+        $product->update(request()->all());
+        return redirect()->route('products.index');
     }
 
     public function destroy($product)
     {
-        //
+        $product = Product::findOrFail($product);
+        $product->delete();
+        return redirect()->route('products.index');
     }
 }
